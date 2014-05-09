@@ -150,15 +150,16 @@ class Tx_Dce_Domain_Repository_DceRepository extends Tx_Extbase_Persistence_Repo
 	protected function fillFields(Tx_Dce_Domain_Model_DceField $dceField, $fieldValue, $isSectionField = FALSE, $xmlIdentifier) {
 		$xmlWrapping = 'xml-' . $xmlIdentifier;
 		$dceFieldConfiguration = t3lib_div::xml2array('<' . $xmlWrapping . '>' . $dceField->getConfiguration() . '</' . $xmlWrapping . '>');
-		$dceFieldConfiguration = $dceFieldConfiguration['config'];
 
-		if (in_array($dceFieldConfiguration['type'], array('group', 'inline', 'select'))
-				&&
-				(
-						($dceFieldConfiguration['type'] === 'select' && !empty($dceFieldConfiguration['foreign_table']))
-								|| ($dceFieldConfiguration['type'] === 'group' && !empty($dceFieldConfiguration['allowed']))
-				)
-				&& $dceFieldConfiguration['dce_load_schema']
+		$dceFieldConfiguration = isset($dceFieldConfiguration['config'])?$dceFieldConfiguration['config']:$dceFieldConfiguration;
+
+		if (is_array($dceFieldConfiguration) && isset($dceFieldConfiguration['type']) && in_array($dceFieldConfiguration['type'], array('group', 'inline', 'select'))
+			&&
+			(
+				($dceFieldConfiguration['type'] === 'select' && !empty($dceFieldConfiguration['foreign_table']))
+				|| ($dceFieldConfiguration['type'] === 'group' && !empty($dceFieldConfiguration['allowed']))
+			)
+			&& $dceFieldConfiguration['dce_load_schema']
 		) {
 			$objects = array();
 
